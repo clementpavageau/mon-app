@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:20-alpine'
+      args '-v /var/run/docker.sock:/var/run/docker.sock'
+    }
+  }
 
   environment {
     GITHUB_REPO = 'git@github.com:clementpavageau/mon-app.git'
@@ -9,25 +14,15 @@ pipeline {
 
   stages {
 
-    stage('Build Docker') {
-      steps {
-        sh 'docker build -t mon-app .'
-      }
-    }
-
     stage('Install') {
       steps {
-        sh 'docker run --rm mon-app npm ci'
+        sh 'npm install'
       }
     }
 
     stage('Build Static') {
       steps {
-        sh '''
-        docker run --rm \
-        -e NEXT_PUBLIC_BASE_PATH=/${APP_NAME} \
-        mon-app npm run build
-        '''
+        sh 'npm run build'
       }
     }
 
