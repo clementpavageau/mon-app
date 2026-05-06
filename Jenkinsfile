@@ -9,12 +9,6 @@ pipeline {
 
   stages {
 
-    stage('Checkout') {
-      steps {
-        git branch: 'main', url: "${GITHUB_REPO}"
-      }
-    }
-
     stage('Build Docker') {
       steps {
         sh 'docker build -t mon-app .'
